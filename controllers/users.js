@@ -7,8 +7,16 @@ const { req, res } = require('express');
 
 const getUsers = (req, res) => {
 
+    /*
+        Obtener los parametros del query de una url
+        ej : /usuarios?q=nombre=luis&id=23
+    */
+    const {nombre , id } = req.query;
+
     res.json({
-        'msg' : 'get API - controlador'
+        'msg' : 'get API - controlador',
+        nombre,
+        id 
     });
 
 }
@@ -29,15 +37,22 @@ const postUsers = (req, res) => {
 
 const putUsers = (req, res) => {
 
+    //Recibir id desde los parametros de la url
+    const id = req.params.id
+
     res.json({
-        'msg' : 'put API - controlador'
+        'msg' : 'put API - controlador',
+        "id" : id
     });
 
 }
 const deleteUsers = (req, res) => {
 
+    const id = req.params.id
+
     res.json({
-        'msg' : 'delete API - controlador'
+        'msg' : 'delete API - controlador',
+        'id' : id
     });
 
 }
