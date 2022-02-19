@@ -14,11 +14,13 @@ const router = Router();
 
 router.get('/', controllers.getUsers);
 
-router.put('/', controllers.putUsers );
+//Recibir parametros en la url utilizando dos puntos y el nombre
+//de variable
+router.put('/:id', controllers.putUsers );
  
 router.post('/', controllers.postUsers );
 
-router.delete('/', controllers.deleteUsers );
+router.delete('/:id', controllers.deleteUsers );
 
 
 
