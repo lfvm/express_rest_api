@@ -1,9 +1,10 @@
 /*
     Controladores para el endpoint de usuarios.
-    Los controladores son funciones que se ejecutan cuando se llama un endpoint de la api, como guardar, actualiuzar o eliminar datos de una db 
+    Los controladores son funciones que se ejecutan cuando se llama un endpoint de la api, como guardar, actualiuzar o eliminar datos de una db. 
 */ 
-const { req, res } = require('express');
 
+const { req, res } = require('express');
+const Usuario = require('../models/user');
 
 const getUsers = (req, res) => {
 
@@ -22,15 +23,18 @@ const getUsers = (req, res) => {
 }
 
 
-const postUsers = (req, res) => {
+const postUsers = async(req, res) => {
 
-    // Extraer el body de la peticion post
-    const {nombre , id } = req.body;
+    // Extraer el body de la peticion post y crear 
+    // un nuevo usuario a partir del body
+    const body = req.body;
+    const new_user = new Usuario( body );
+
+    await new_user.save();
 
     res.json({
         'msg' : 'post API - controlador',
-        'nombre' : nombre,
-        "id" : id
+        new_user
     });
 
 }
