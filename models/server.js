@@ -6,7 +6,8 @@
     Despues solo llamamos el metodo listen en algun puerto definido 
 */
 const express = require('express');
-const cors = require('cors')
+const cors = require('cors');
+const { dbConnection } = require('../database/config');
 require('dotenv').config()
 
 
@@ -19,6 +20,10 @@ class Server {
         this.app = express(); 
         this.port = process.env.PORT;
 
+        //Iniciar conexion con la base de datos
+        this.databaseConnection();
+
+
         //Middlewares
         this.middlewares();
 
@@ -28,6 +33,13 @@ class Server {
         };
 
         this.routes();
+
+    }
+
+
+    async databaseConnection() {
+
+        await dbConnection();
 
     }
 
