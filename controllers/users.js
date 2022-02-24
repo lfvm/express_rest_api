@@ -3,12 +3,13 @@
     Los controladores son funciones que se ejecutan cuando se llama un endpoint de la api, como guardar, actualiuzar o eliminar datos de una db. 
 */ 
 
-const bcrypt = require('bcryptjs/dist/bcrypt');
+const bcrypt = require('bcryptjs');
 const { req, res } = require('express');
 const { validationResult } = require('express-validator');
+const { emailExists } = require('../helpers/db-validators');
 const Usuario = require('../models/user');
 
-const getUsers = (req, res) => {
+const getUsers = async(req, res) => {
 
     /*
         Obtener los parametros del query de una url
@@ -16,10 +17,11 @@ const getUsers = (req, res) => {
     */
     const {nombre , id } = req.query;
 
+    const users = await Usuario.find();
+
     res.json({
-        'msg' : 'get API - controlador',
-        nombre,
-        id 
+        'msg' : 'get users',
+        users
     });
 
 }
@@ -32,18 +34,7 @@ const postUsers = async(req, res) => {
     const {nombre , correo, password, rol } = req.body;
     const new_user = new Usuario( { nombre, correo, password, rol } );
 
-    //Verificar si el correo ya existe en la db
-    const emailExists = await Usuario.find( { correo });
-    //Regresar mensaje de error con codigo 400 en caso 
-    //de que exista un correo repetido
-
-    if( emailExists ){
-        return res.status(400).json({
-            'status': 'error',
-            'error' : 'El correo ya esta registrado',
-        });
-    }
-    
+   
     //Encriptar contraseña con bcrypt
     const salt = bcrypt.genSaltSync();
     new_user.password = bcrypt.hashSync( new_user.password, salt );
@@ -53,7 +44,7 @@ const postUsers = async(req, res) => {
     await new_user.save();
 
     res.json({
-        'msg' : 'post API - controlador',
+        'msg' : 'Usuario creado correctamente',
         new_user
     });
 

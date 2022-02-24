@@ -4,13 +4,15 @@
     Despues en la clase del Server importaremos esta variable 'router'
     para usar las rutas
 */
-
-
 const { Router } = require('express');
 const { check } = require('express-validator');
-const controllers = require('../controllers/users');
-const router = Router();
+const { validateRequestRole, emailExists } = require('../helpers/db-validators');
 const { validateRequestFields } = require('../middlewares/field_validation');
+const router = Router();
+const controllers = require('../controllers/users');
+
+
+
 
 
 
@@ -24,9 +26,16 @@ router.post('/nuevo', [
 
     //Middlewares que permiten hacer validaciones antes de ejecutar la funcion de la ruta
     check('correo', 'El correo es invalido').isEmail(),
+    check('correo').custom( emailExists ),
+
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('password', 'el password debe tener mas de 6 letras').isLength({min: 6}),
-    check('rol', 'No es un rol valido').isIn(['admin','user']),
+    
+    //check('rol', 'No es un rol valido').isIn(['admin','user']),
+    //Validacion personalizada encontrada en el folder helpers 
+    check('rol').custom( validateRequestRole ),
+
+
     validateRequestFields
     
 ], controllers.postUsers );

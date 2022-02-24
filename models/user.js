@@ -46,7 +46,6 @@ const UserSchema = Schema({
     rol: {
         type: String,
         required: [true, "rol no proporcionado"],  
-        enum: ['admin','user']
     },
 
 
@@ -62,6 +61,20 @@ const UserSchema = Schema({
     },
 
 });
+
+
+/*  
+    Modificar metodo que envia la respuesta json
+    para evitar que mande la contraseña del usuario y datos no necesarios
+*/
+
+UserSchema.methods.toJSON = function() {
+
+    //Eliminar version, contraseña y guardar todos los demas elementos
+    //En variable llamada usuario
+    const { __v, password, ...usuario } = this.toObject();
+    return usuario;
+};
 
 
 /* 
