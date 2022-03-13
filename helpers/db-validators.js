@@ -22,13 +22,25 @@ const validateRequestRole = async ( rol = '' ) => {
 const emailExists = async ( correo = '' ) => {
 
     //Verificar si el correo ya existe en la db
-    const isEmailInDB = await Usuario.find( { correo });
+    const isEmailInDB = await Usuario.findOne( { correo });
     //Regresar mensaje de error con codigo 400 en caso 
     //de que exista un correo repetido
-    if( isEmailInDB ){
+    if( isEmailInDB  ){
        
         throw new Error(`El correo ${ correo } ya se encuentra en la base de datos` );
     }
+
+}
+
+const userExists = async ( id  ) => {
+
+    //Verificar si el id ya existe en la db
+    const isIdinDb = await Usuario.findById( id );
+    if( !isIdinDb ){
+    
+        throw new Error(`El id ${ id } no se encuentra en la base de datos` );
+    }
+
 
 }
 
@@ -36,5 +48,6 @@ const emailExists = async ( correo = '' ) => {
 module.exports = {
 
     validateRequestRole,
-    emailExists
+    emailExists,
+    userExists
 }
