@@ -6,7 +6,7 @@
 */
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { validateRequestRole, emailExists } = require('../helpers/db-validators');
+const { validateRequestRole, emailExists, userExists } = require('../helpers/db-validators');
 const { validateRequestFields } = require('../middlewares/field_validation');
 const router = Router();
 const controllers = require('../controllers/users');
@@ -20,8 +20,18 @@ router.get('/', controllers.getUsers);
 
 //Recibir parametros en la url utilizando dos puntos y el nombre
 //de variable
-router.put('/:id', controllers.putUsers );
+router.put('/:id', [
+
+    check('id', "Invalid ID").isMongoId(),
+    check('id').custom( userExists ),
+    check('rol').custom( validateRequestRole ),
+
+    validateRequestFields
+
+], controllers.UpdateUser );
  
+
+
 router.post('/nuevo', [
 
     //Middlewares que permiten hacer validaciones antes de ejecutar la funcion de la ruta
@@ -38,9 +48,17 @@ router.post('/nuevo', [
 
     validateRequestFields
     
-], controllers.postUsers );
+], controllers.CreateUser );
 
-router.delete('/:id', controllers.deleteUsers );
+
+
+router.delete('/:id', [
+
+    check('id', "Invalid ID").isMongoId(),
+    check('id').custom( userExists ),
+    validateRequestFields,
+
+],controllers.deleteUsers );
 
 
 
