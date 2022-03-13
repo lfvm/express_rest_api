@@ -13,21 +13,41 @@ const getUsers = async(req, res) => {
 
     /*
         Obtener los parametros del query de una url
-        ej : /usuarios?q=nombre=luis&id=23
+        ej : /usuarios?limite=3.
+        En este caso para limitar el numero de usuarios que se regresara. 
     */
-    const {nombre , id } = req.query;
+    const {limite = 5, desde = 0  } = req.query;
 
-    const users = await Usuario.find();
+    const query = { estado: true }
+
+
+    //Buscar usuarios desde un numero hasta el limite establecido
+    // const users = await Usuario.find( query )
+    //     .skip( Number(desde) )
+    //     .limit( Number(limite) );
+
+    //Obtener el total de documentos
+    // const totalUsers = await Usuario.countDocuments( query );
+
+    // *Con la siguiente promesa podemos llamar dos metoddos await al mismo tiempo
+    //* Provocando un tiempo de respuesta mas rapido 
+    const [ total, usuarios] = await Promise.all([
+        Usuario.countDocuments( query ),
+        Usuario.find( query )
+            .skip( Number(desde))
+            .limit( Number(limite))
+    ]);
 
     res.json({
-        'msg' : 'get users',
-        users
+        'msg' : `get ${limite} users from ${desde}`,
+        total,
+        usuarios
     });
 
 }
 
 
-const postUsers = async(req, res) => {
+const CreateUser = async(req, res) => {
 
     // Extraer el body de la peticion post y crear 
     // un nuevo usuario a partir del body
@@ -50,24 +70,49 @@ const postUsers = async(req, res) => {
 
 }
 
-const putUsers = (req, res) => {
+const UpdateUser = async(req, res) => {
 
     //Recibir id desde los parametros de la url
     const id = req.params.id
 
+    //Ignorar parametros que no deben ser cambiados
+    const {_id, passsword, google, ...userToUpdate } = req.body;
+    
+    //Si se manda la contraseña en el request
+    if ( passsword ) {
+        
+        //Verificar que la contraseña s
+        const salt = bcrypt.genSaltSync();
+        userToUpdate.password = bcrypt.hashSync( new_user.password, salt );
+
+    }
+
+
+    //Actualizar usuario
+    const usuario = await Usuario.findByIdAndUpdate(id, userToUpdate);
+
     res.json({
-        'msg' : 'put API - controlador',
-        "id" : id
+        'msg' : 'Usuario Actualizado',
+        usuario
     });
 
 }
-const deleteUsers = (req, res) => {
 
-    const id = req.params.id
+
+const deleteUsers = async (req, res) => {
+
+    const { id } = req.params;
+
+    /*
+     Borrar por completo el usuario en la db
+     const usuario = await Usuario.findByIdAndDelete( id );
+    */
+
+    // EN lugar de borrar un usuario por completo de la db, actualizar su estado a inactivo
+    const usuario = await Usuario.findByIdAndUpdate( id, {estado: false} );
 
     res.json({
-        'msg' : 'delete API - controlador',
-        'id' : id
+        usuario
     });
 
 }
@@ -77,8 +122,8 @@ const deleteUsers = (req, res) => {
 module.exports = {
 
     getUsers,
-    postUsers,
-    putUsers,
+    CreateUser,
+    UpdateUser,
     deleteUsers
 
 }
