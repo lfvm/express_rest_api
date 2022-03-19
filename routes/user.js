@@ -8,6 +8,10 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validateRequestRole, emailExists, userExists } = require('../helpers/db-validators');
 const { validateRequestFields } = require('../middlewares/field_validation');
+const { validateJWT } = require('../middlewares/validate_jwt');
+const { validateAdminRole } = require('../middlewares/validate_roles');
+
+
 const router = Router();
 const controllers = require('../controllers/users');
 
@@ -53,11 +57,11 @@ router.post('/nuevo', [
 
 
 router.delete('/:id', [
-
+    validateJWT,
+    validateAdminRole,
     check('id', "Invalid ID").isMongoId(),
     check('id').custom( userExists ),
     validateRequestFields,
-
 ],controllers.deleteUsers );
 
 

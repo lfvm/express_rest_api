@@ -72,7 +72,8 @@ UserSchema.methods.toJSON = function() {
 
     //Eliminar version, contraseña y guardar todos los demas elementos
     //En variable llamada usuario
-    const { __v, password, ...usuario } = this.toObject();
+    const { __v, password, _id, ...usuario } = this.toObject();
+    usuario.uid = _id;
     return usuario;
 };
 

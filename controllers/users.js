@@ -103,16 +103,15 @@ const deleteUsers = async (req, res) => {
 
     const { id } = req.params;
 
-    /*
-     Borrar por completo el usuario en la db
-     const usuario = await Usuario.findByIdAndDelete( id );
-    */
-
     // EN lugar de borrar un usuario por completo de la db, actualizar su estado a inactivo
     const usuario = await Usuario.findByIdAndUpdate( id, {estado: false} );
+    const authUser = req.authUser;
 
     res.json({
-        usuario
+        //Usuario borrado
+        usuario,
+        //Usuario que lo borro
+        authUser
     });
 
 }

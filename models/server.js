@@ -30,6 +30,7 @@ class Server {
         // Inicializar las rutas
         this.appRoutes = {
             'usuarios' : '/api/usuarios',
+            'auth'     : '/api/auth',
         };
 
         this.routes();
@@ -62,6 +63,8 @@ class Server {
 
       //Rutas del usuario
       this.app.use(this.appRoutes.usuarios , require('../routes/user') );
+      this.app.use(this.appRoutes.auth , require('../routes/auth') );
+
 
 
 
