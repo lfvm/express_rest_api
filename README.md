@@ -3,7 +3,7 @@
 Implementation of a rest api using Node JS and Express, which
 can be adapted for almost any project that needs a backend.
 
-To view endointps and documentation please check the following link: documenter.getpostman.com/view/17093270/UVsQsjQS
+To view endointps and documentation please check the following link: https://documenter.getpostman.com/view/17093270/UVsQsjQS
 
 ## Languages and Tools
 
